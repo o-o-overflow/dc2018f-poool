@@ -70,7 +70,7 @@ void client_send_job(struct client *c) {
 
     int len = snprintf(buf, sizeof(buf),
         "{\"id\":null,\"method\":\"mining.notify\",\"params\":[\"%08x\",\"%s\",\"%08x\"]}\n",
-        c->job->id, c->job->header, c->job->time);
+        c->job->id, hdr, c->job->time);
     write(1, buf, len);
 }
 
@@ -108,6 +108,11 @@ static int valid_username(const char *username) {
 }
 
 static void client_authorize(struct client *client, struct json_array_s *params) {
+    if (!client->nonce1) {
+        client_send_error(client, "not subscribed");
+        return ;
+    }
+
     if (client->authorized) {
         client_send_error(client, "already authorized");
         return ;
@@ -122,6 +127,8 @@ static void client_authorize(struct client *client, struct json_array_s *params)
         client_send_error(client, "invalid username");
         return ;
     }
+
+    client->authorized = 1;
 
     struct json_value_s *password = json_get_index(params, 1);
     if (password && password->type == json_type_string) {

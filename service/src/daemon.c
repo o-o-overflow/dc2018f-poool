@@ -27,7 +27,7 @@ void *daemon_thread(void *args) {
         pthread_mutex_lock(&g_client_lock);
 
         // adjust difficulty
-        if (!g_client->recent_submission) {
+        if (g_client->job && !g_client->recent_submission) {
             // too hard?
             uint64_t target = g_client->target / 4;
             target *= 3;
