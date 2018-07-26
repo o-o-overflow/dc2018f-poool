@@ -157,7 +157,7 @@ static void client_submit(struct client *client, struct json_array_s *params) {
 
     for (int i = 0; i < params->length; i++) {
         struct json_value_s *val = json_get_index(params, i);
-        if (!val || val->type != json_type_string || val->type != json_type_number) {
+        if (!val || (val->type != json_type_string && val->type != json_type_number)) {
             client_send_error(client, "invalid params");
             return ;
         }
