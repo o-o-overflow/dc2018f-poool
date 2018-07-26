@@ -17,10 +17,11 @@ void *daemon_thread(void *args) {
     FD_SET(daemon_pipe[0], &fdset);
 
     struct timeval timeout;
-    timeout.tv_sec = 15;
-    timeout.tv_usec = 0;
 
     while (1) {
+        timeout.tv_sec = 15;
+        timeout.tv_usec = 0;
+
         int ret = select(1, &fdset, NULL, NULL, &timeout);
 
         pthread_mutex_lock(&g_client_lock);
