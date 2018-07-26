@@ -50,7 +50,7 @@ void client_send_difficulty(struct client *c) {
     char diff[0x48];
     snprintf(diff, sizeof(diff), "%016lx", c->target);
     memset(&diff[0x10], '0', 0x30);
-    diff[0x20] = '\0';
+    diff[0x40] = '\0';
     char buf[0x100];
     int len = snprintf(buf, sizeof(buf),
         "{\"id\":null,\"method\":\"mining.set_difficulty\",\"params\":[\"%s\"]}\n", diff);
