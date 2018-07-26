@@ -18,7 +18,7 @@ struct job *job_next() {
 
         g_job = calloc(1, sizeof(struct job));
         g_job->id = 0;
-        g_job->time = time(NULL);
+        g_job->time = 0;
         g_job->nonce = randint();
 
         const char *flag = getflag();
@@ -36,6 +36,7 @@ struct job *job_next() {
     struct job *j = malloc(sizeof(struct job));
     *j = *g_job;
     j->nonce += j->id;
+    j->time = time(NULL);
     return j;
 }
 
