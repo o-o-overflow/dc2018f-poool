@@ -83,7 +83,7 @@ static void client_subscribe(struct client *client, struct json_array_s *params)
     client->target = CLIENT_DEFAULT_TARGET;
 
     struct json_value_s *version = json_get_index(params, 0);
-    if (version->type == json_type_string) {
+    if (version && version->type == json_type_string) {
         strncpy(client->version, ToString(version), sizeof(client->version));
     }
 
@@ -114,7 +114,7 @@ static void client_authorize(struct client *client, struct json_array_s *params)
     }
 
     struct json_value_s *username = json_get_index(params, 0);
-    if (username->type == json_type_string) {
+    if (username && username->type == json_type_string) {
         strncpy(client->username, ToString(username), sizeof(client->username));
     }
 
@@ -124,7 +124,7 @@ static void client_authorize(struct client *client, struct json_array_s *params)
     }
 
     struct json_value_s *password = json_get_index(params, 1);
-    if (password->type == json_type_string) {
+    if (password && password->type == json_type_string) {
         strncpy(client->password, ToString(password), sizeof(client->password));
     }
 
@@ -150,7 +150,7 @@ static void client_submit(struct client *client, struct json_array_s *params) {
 
     for (int i = 0; i < params->length; i++) {
         struct json_value_s *val = json_get_index(params, i);
-        if (val->type != json_type_string || val->type != json_type_number) {
+        if (!val || val->type != json_type_string || val->type != json_type_number) {
             client_send_error(client, "invalid params");
             return ;
         }
@@ -193,7 +193,7 @@ static void client_submit(struct client *client, struct json_array_s *params) {
 
 static void client_suggest_target(struct client *client, struct json_array_s *params) {
     struct json_value_s *target = json_get_index(params, 0);
-    if (target->type == json_type_string) {
+    if (target && target->type == json_type_string) {
         uint64_t tmp;
         hex2bin(ToString(target), (char *)&tmp, 16);
         uint64_t target = SWAP64(tmp);
