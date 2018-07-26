@@ -97,7 +97,8 @@ struct json_value_s *nextjson(struct client *client) {
                 struct json_value_s *obj = json_parse(start, len);
 
                 *s = t;
-                memmove(buf, s, end - s + 1); // including the NULL byte
+                client->buf_len = end - s;
+                memmove(buf, s, client->buf_len + 1); // including the NULL byte
                 return obj; // valid or NULL
             }
         }
