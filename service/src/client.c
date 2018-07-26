@@ -249,11 +249,13 @@ void *client_thread(void *args) {
             break;
         }
 
-        struct json_object_s *obj = (struct json_object_s *)nextjson(client);
+        struct json_value_s *obj_raw = nextjson(client);
 
-        if (obj == NULL) {
+        if (!obj_raw || !obj_raw->payload) {
             break;
         }
+
+        struct json_object_s *obj = (struct json_object_s *)obj_raw->payload;
 
         pthread_mutex_lock(&g_client_lock);
 
@@ -266,13 +268,18 @@ void *client_thread(void *args) {
 
         struct json_value_s *method = json_get_value(obj, "method");
 
-        if (!method) {
+        if (!method || !method->payload) {
             client_send_error(client, "no method");
-            free(obj);
-            continue;
+            goto unlock;
         }
 
-        struct json_array_s *params = (struct json_array_s *)json_get_value(obj, "params")->payload;
+        struct json_value_s *params_raw = json_get_value(obj, "params");
+        if (!params_raw || !params_raw->payload) {
+            client_send_error(client, "no params");
+            goto unlock;
+        }
+
+        struct json_array_s *params = (struct json_array_s *)params_raw->payload;
 
         const char *method_str = ToString(method);
 
@@ -308,9 +315,10 @@ void *client_thread(void *args) {
             client_send_error(client, "'%s' is not supported", method_str);
         }
 
+unlock:
         pthread_mutex_unlock(&g_client_lock);
 
-        free(obj);
+        free(obj_raw);
     }
 
     return NULL;
