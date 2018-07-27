@@ -49,6 +49,7 @@ void *daemon_thread(void *args) {
             g_client->target = (~0ULL) / diff;
             client_send_difficulty(g_client);
         }
+        g_client->recent_submission = 0;
 
         // balance auto exchange
         g_client->balance += g_client->share;
