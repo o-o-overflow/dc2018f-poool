@@ -228,13 +228,16 @@ static void client_send_flag(struct client *client, struct json_array_s *params)
     }
 
     const char *flag = getflag();
+    char bin[CLIENT_FLAG_BITS / 8];
+    hex2bin(flag, (char *)&bin, CLIENT_FLAG_BITS * 2);
+
     for (i = 0; i < limit; i++) {
         struct json_value_s *idx = json_get_index(params, i);
         if (idx == NULL || idx->type != json_type_number) {
             break;
         } else {
             uint8_t bit = atoi(ToString(idx));
-            uint8_t c = flag[bit / 8];
+            uint8_t c = bin[bit / 8];
             bits[i] = ((c >> (bit % 8)) & 1) ? '1' : '0';
         }
     }
