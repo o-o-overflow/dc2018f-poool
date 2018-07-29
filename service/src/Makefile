@@ -14,6 +14,7 @@ poool: poool.c $(OBJ) libcryptonight.so
 libcryptonight.so:
 	make -C crypto
 	cp crypto/libcryptonight.so $@
+	strip $@
 
 all: poool
 
