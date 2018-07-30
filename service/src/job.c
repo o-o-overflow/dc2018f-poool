@@ -35,7 +35,6 @@ struct job *job_next() {
     g_job->id++;
     struct job *j = malloc(sizeof(struct job));
     *j = *g_job;
-    j->nonce += j->id;
     j->time = time(NULL);
     return j;
 }
@@ -80,16 +79,16 @@ uint64_t job_calc_diff(const char *nonce2, const char *timestamp) {
 
     ints[0] = g_job->nonce;
 
-    hex2bin(timestamp, (uint8_t *)&tmp, 8);
-    ints[1] = SWAP32(tmp);
+    sscanf(timestamp, "%8x", &tmp);
+    ints[1] = tmp;
 
-    hex2bin(nonce2, (uint8_t *)&tmp, 8);
-    ints[2] = SWAP32(tmp);
+    sscanf(nonce2, "%8x", &tmp);
+    ints[2] = tmp;
     ints[3] = '0oO\0';
 
     uint8_t hash[SHA256_DIGEST_LENGTH];
     ooo_hash(block, sizeof(block), (uint8_t *)&hash);
-    return *(uint64_t *)&hash;
+    return SWAP64(*(uint64_t *)&hash);
 }
 
 void job_prune() {

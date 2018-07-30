@@ -201,12 +201,10 @@ static void client_submit(struct client *client, struct json_array_s *params) {
 static void client_suggest_target(struct client *client, struct json_array_s *params) {
     struct json_value_s *target = json_get_index(params, 0);
     if (target && target->type == json_type_string) {
-        uint64_t tmp;
-        hex2bin(ToString(target), (char *)&tmp, 16);
-        uint64_t target = SWAP64(tmp);
-        if (target >= CLIENT_FINAL_TARGET) {
+        uint64_t tmp = 0;
+        if (sscanf(ToString(target), "%16lx", &tmp) == 1 && tmp >= CLIENT_FINAL_TARGET) {
             client_send_result(client, "true");
-            client->target = target;
+            client->target = tmp;
             client_send_difficulty(client);
             client->job = job_next();
             client_send_job(client);
