@@ -37,8 +37,8 @@ size_t bin2hex(const char *src, char *dst, size_t len) {
     int j = 0;
     for (int i = 0; i < len; i++) {
         uint8_t c = src[i];
-        dst[j++] = hexchars[c & 0xf];
         dst[j++] = hexchars[c >> 4];
+        dst[j++] = hexchars[c & 0xf];
     }
     return j;
 }
