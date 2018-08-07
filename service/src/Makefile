@@ -2,7 +2,7 @@
 
 SRC := client.c daemon.c job.c json.c utils.c crypto.c
 OBJ := $(patsubst %.c,%.o, $(SRC))
-CFLAGS := -O3 -Wno-unused-result -Wno-multichar -I.
+CFLAGS += -O3 -fPIE -Wl,-z,relro,-z,now -Wno-unused-result -Wno-multichar -I.
 
 %.o: %.c %.h
 	$(CC) -c $(CFLAGS) -o $@ $<
