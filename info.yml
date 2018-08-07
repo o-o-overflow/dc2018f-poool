@@ -1,0 +1,23 @@
+# This is the service's name
+service_name: "poool"
+service_port: 10001
+max_patch_bytes: 5
+
+# All paths relative from `service` directory
+patchable_files:
+  - src/poool
+
+# All paths relative to the `services` docker container
+flag_location:
+  - /flag
+
+authors:
+  - slipper
+description: "pay per share stratum mining poool~"
+
+# Directories for the next two are relative to the `interactions` docker container
+exploit_scripts:
+  - /exploit1.py
+
+sla_scripts:
+  - /check1.py
