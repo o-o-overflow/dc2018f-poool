@@ -255,6 +255,9 @@ void *client_thread(void *args) {
     while (!client->stop) {
         if (client->total_error > CLIENT_BAD_LIMINT) {
             break;
+        } else if (client->recent_submission > 150) {
+            // too fast
+            break;
         }
 
         struct json_value_s *obj_raw = nextjson(client);
