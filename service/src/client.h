@@ -8,13 +8,18 @@
 
 #define CLIENT_BUFSIZE 0x1000
 #define CLIENT_BAD_LIMINT 8
-#define CLIENT_DEFAULT_TARGET 0x1000000000000000ULL
-#define CLIENT_DEFAULT_DIFF 0x10
+// The hashing power of my laptop is about 50H/s (single core under docker),
+// so the expected time for default task is about 0x200 / 50 = 10.24s, which
+// fits in a difficulty adjustment period.
+#define CLIENT_DEFAULT_TARGET 0x80000000000000ULL
+#define CLIENT_DEFAULT_DIFF 0x200
 #define CLIENT_INVALID_TARGET 0x4000000000000000ULL
-// #define CLIENT_LOWEST_TARGET 0x100000000000ULL
-#define CLIENT_FINAL_TARGET 0x100000000000LL
-#define CLIENT_FINAL_DIFF 0x100000
+#define CLIENT_FINAL_TARGET 0x20000000000LL
+// It takes a 32 CPU machine to run about 300+s to get enough share. Hope
+// it's heavy enough since it only worths one flag.
+#define CLIENT_FINAL_DIFF 0x80000
 #define CLIENT_FLAG_BITS 0xc0
+// We should be able to fetch 1 bit of the flag in about 55s on average.
 #define CLIENT_FLAG_PRICE_PER_BIT (CLIENT_FINAL_DIFF / CLIENT_FLAG_BITS)
 
 struct client {
