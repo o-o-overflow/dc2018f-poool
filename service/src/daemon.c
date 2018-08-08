@@ -29,9 +29,7 @@ void *daemon_thread(void *args) {
         // adjust difficulty
         if (g_client->job && !g_client->recent_submission) {
             // too hard?
-            uint64_t target = g_client->target / 4;
-            target *= 3;
-            target += 0x2000000000000000ULL;
+            uint64_t target = g_client->target * 1.3;
             if (target < g_client->target || target > CLIENT_INVALID_TARGET) {
                 // seems dead
                 g_client->stop = 1;
