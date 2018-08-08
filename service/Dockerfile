@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-RUN apt-get update && apt-get install -y xinetd libssl1.0.0
+RUN apt-get update && apt-get install -y xinetd libssl1.1
 RUN touch /flag && chmod 644 /flag && echo -ne "TESTFLAG" | md5sum | cut -f1 -d' ' > /flag
 COPY service.conf /service.conf
 
