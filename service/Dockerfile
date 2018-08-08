@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 RUN apt-get update && apt-get install -y xinetd libssl1.1
-RUN touch /flag && chmod 644 /flag && echo -ne "TESTFLAG" | md5sum | cut -f1 -d' ' > /flag
+RUN touch /flag && chmod 644 /flag && echo -n "TESTFLAG" | shasum -a 512 | cut -c 1-48  > /flag
 COPY service.conf /service.conf
 
 COPY src/libcryptonight.so /usr/lib/
