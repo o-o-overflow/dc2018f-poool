@@ -1,8 +1,5 @@
-FROM python:2.7-alpine
-
-ENV TERM linux
-
-RUN apk update && apk add --no-cache git netcat-openbsd openssl-dev libffi-dev g++ linux-headers make bash
+FROM ubuntu:18.04
+RUN apt-get update && apt-get install -y git python-pip libssl1.0.0
 COPY requirements.txt /requirements.txt
 RUN pip install -r requirements.txt
 
