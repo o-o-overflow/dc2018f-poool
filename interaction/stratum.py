@@ -1,5 +1,14 @@
 from pwn import *
+from cryptonight import job_hash
 import json, string, threading
+
+FINAL_DIFF = 0x80000
+FLAG_BITS = 0xc0
+FLAG_PRICE_PER_BIT = FINAL_DIFF / FLAG_BITS
+REAL_FLAG = bin(int(hashlib.sha512('TESTFLAG').hexdigest()[:48].decode('hex')[::-1].encode('hex'), 16))[2:].rjust(FLAG_BITS, '0')
+
+class CheckFailure(Exception):
+    pass
 
 def gen_username():
     charset = list(set(string.letters + string.digits).difference('IOl0'))
@@ -44,8 +53,10 @@ class Stratum(object):
                 }
 
         self.nonce1 = None
+        self.nonce2 = 0
         self.target = 0
         self.job = None
+        self.expected_share = 0
 
         self.slots = {}
         self.listener = threading.Thread(target=self.loop, args=())
@@ -86,10 +97,12 @@ class Stratum(object):
         self.request_sync('mining.authorize', [self.username, 'x'])
         log.info('nonce1 = %08x', self.nonce1)
 
-    def submit(self, nonce2, time=None):
+    def submit(self, nonce2, time=None, job_id=None):
         if time is None:
             time = self.job['time']
-        return self.request_sync('mining.submit', [self.username, self.job['id'],
+        if job_id is None:
+            job_id = self.job['id']
+        return self.request_sync('mining.submit', [self.username, job_id,
             nonce2, '%08x' % time])
 
     def set_target(self, target):
@@ -102,7 +115,7 @@ class Stratum(object):
         return self.request_sync('client.stats.share')['result']
 
     def get_balance(self):
-        return self.request_sync('client.stats.balance')['result']
+        return int(self.request_sync('client.stats.balance')['result'].split()[0])
 
     def query_flag(self, ranges):
         return self.request_sync('client.exchange.flag', ranges)['result']
@@ -117,6 +130,31 @@ class Stratum(object):
                 log.debug('got object: %r', o)
         except EOFError as e:
             log.warning('invalid json: %r', e)
+
+    def try_solve(self):
+        cur_job = self.job
+        hdr = cur_job['header'].decode('hex') + struct.pack('<I',
+                self.nonce1)
+        self.nonce2 += 1
+        h = job_hash(hdr, self.nonce2, cur_job['time'])
+        d = int(h, 16)
+        if d < self.target:
+            cur_target = self.target
+            log.info('good nonce: %#x %s %d', self.nonce2, h, (1 << 256) / d)
+            res = self.submit(struct.pack('>I', self.nonce2).encode('hex'),
+                    cur_job['time'], cur_job['id'])
+            if res.get('result') == False:
+                # wait for syncing current job
+                time.sleep(1)
+                if self.job != cur_job:
+                    log.warn('late submission')
+                    return False
+                else:
+                    log.error('invalid response: %r', res)
+                    raise CheckFailure('share not accepted: %r' % res)
+            self.expected_share += ((1 << 256) - 1) / cur_target
+            return True
+        return False
 
 if __name__ == '__main__':
     context.log_level = 'DEBUG'
