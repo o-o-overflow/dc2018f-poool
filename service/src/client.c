@@ -66,7 +66,7 @@ void client_send_job(struct client *c) {
     }
 
     int n = bin2hex((const char *)&c->job->header, hdr, sizeof(c->job->header));
-    c->job->header[n] = '\0';
+    hdr[n] = '\0';
 
     int len = snprintf(buf, sizeof(buf),
         "{\"id\":null,\"method\":\"mining.notify\",\"params\":[\"%08x\",\"%s\",\"%08x\"]}\n",
