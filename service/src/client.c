@@ -186,11 +186,14 @@ static void client_submit(struct client *client, struct json_array_s *params) {
 
         uint64_t diff = (~0ULL) / client->target;
         client->share += diff;
+        client->total_share += diff;
 
         client_send_result(client, "[true]");
 
         if (hash < CLIENT_FINAL_TARGET) {
-            client->share += CLIENT_FINAL_DIFF * 0.3;
+            uint64_t bonus = CLIENT_FINAL_DIFF * 0.3;
+            client->share += bonus;
+            client->total_share += bonus;
             daemon_notify();
         }
     } else {
@@ -315,7 +318,7 @@ void *client_thread(void *args) {
         } else if(!strcmp(method_str, "client.stats.speed")) {
             time_t now = time(NULL);
             double period = now - client->login_time;
-            client_send_result(client, "\"%lfKH/s\"", client->share / period / 1000.);
+            client_send_result(client, "\"%lfKH/s\"", client->total_share / period / 1000.);
         } else if(!strcmp(method_str, "client.stats.share")) {
             client_send_result(client, "%lld", client->share);
         } else if(!strcmp(method_str, "client.stats.balance")) {

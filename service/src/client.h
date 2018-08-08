@@ -38,6 +38,7 @@ struct client {
     struct job *job;
     uint64_t target;
     uint64_t share;
+    uint64_t total_share;
     uint64_t balance;
     uint32_t nonce1;
     char version[0x20];
