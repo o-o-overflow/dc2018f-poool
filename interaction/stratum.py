@@ -23,7 +23,7 @@ def difficulty_update(stratum, o):
             return
     except KeyError as e:
         log.warning('difficulty_update: %r', e)
-    log.warning('no valid target: %r', o)
+    raise CheckFailure('no valid target: %r' % o)
 
 def new_job(stratum, o):
     params = o.get('params')
@@ -38,7 +38,7 @@ def new_job(stratum, o):
             return
     except KeyError as e:
         log.warning('new_job: %r', e)
-    log.warning('no valid job: %r', o)
+    raise CheckFailure('no valid job: %r' % o)
 
 class Stratum(object):
     def __init__(self, tube):

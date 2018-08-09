@@ -14,43 +14,51 @@ def main():
 
     conn = remote(host, port)
 
-    s = Stratum(conn)
+    class TestStratum(Stratum):
+        def test_balance(self):
+            share = self.get_share()
+            balance = self.get_balance()
+            # if there is a race between get_share & get_balance, we may see a
+            # greater value than expected
+            assert share + balance >= self.expected_share, 'expected %s, current share = %s, balance = %s' % (self.expected_share, share, balance)
+
+        def test_set_target(self):
+            good_diff = random.randint(100, 400)
+            target = '%08x' % (0xffffffff / good_diff) + '0' * 0x38
+            self.set_target([target])
+            # after the synchronized call, we should have new
+            # difficulty/job immediately
+            target_ = int(target, 16)
+            for _ in xrange(4):
+                if self.target != target_:
+                    time.sleep(0.1)
+            assert self.target == target_, 'target = %s not %s' % (self.target, target_)
+
+        def test_submit(self, n=1000, timeout=60):
+            self.test_set_target()
+            end = time.time() + timeout
+            while n > 0:
+                if self.try_solve():
+                    n -= 1
+                if time.time() > end:
+                    break
+
+        def test_random(self):
+            selector = random.choice(['balance', 'set_target', 'submit'])
+            method = getattr(self, 'test_' + selector)
+            method()
+
+    s = TestStratum(conn)
     s.login()
 
     end = time.time() + TIMEOUT
     while time.time() < end:
-        for _  in xrange(1000): # expected in 20s
-            s.try_solve()
+        s.test_random()
 
-    share = s.get_share()
-    balance = s.get_balance()
-    speed = s.get_speed()
-    log.info('share = %d balance = %s speed = %s expected total = %d', share, balance,
-            speed, s.expected_share)
-    if share + balance < s.expected_share:
-        # if there is a race between get_share & get_balance, we may see a
-        # greater value than expected
-        raise CheckFailure('share incorrect')
-
-    # wait until the share goes to balance
-    while s.get_share() > 0:
-        time.sleep(2)
+    s.test_balance()
 
     balance = s.get_balance()
     log.info('final balance = %s', balance)
-
-    nbits = balance / FLAG_PRICE_PER_BIT
-    if nbits > 0:
-        log.info('try get %d bits of flag', nbits)
-        indices = range(FLAG_BITS)
-        random.shuffle(indices)
-        indices = indices[:nbits]
-        res = s.query_flag(indices)
-        for i, idx in enumerate(indices):
-            # TODO check with flag oracle
-            log.info('bit #%d = %s, expeceted %s', idx, res[i], REAL_FLAG[idx])
-            if REAL_FLAG[idx] != res[i]:
-                raise CheckFailure('incorrect bit')
 
     sys.exit(0)
 

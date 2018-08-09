@@ -37,8 +37,9 @@ def main():
         def test_submit(self, n=1000, timeout=60):
             self.test_set_target()
             end = time.time() + timeout
-            for _ in xrange(n):
-                self.try_solve()
+            while n > 0:
+                if self.try_solve():
+                    n -= 1
                 if time.time() > end:
                     break
 
@@ -50,9 +51,8 @@ def main():
     s = TestStratum(conn)
     s.login()
 
-    end = time.time() + TIMEOUT
-    while time.time() < end:
-        s.test_random()
+    for i in xrange(10):
+        s.test_submit(15, timeout=15)
 
     s.test_balance()
 
