@@ -11,4 +11,6 @@ COPY exploit1.py /exploit1.py
 COPY exploit2.py /exploit2.py
 COPY exploit3.py /exploit3.py
 
-COPY check1.py /check1.py
+COPY test1.py /test1.py
+COPY test2.py /test2.py
+COPY sla1.py /sla1.py
