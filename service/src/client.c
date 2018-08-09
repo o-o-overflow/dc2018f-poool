@@ -249,8 +249,7 @@ static void client_send_flag(struct client *client, struct json_array_s *params)
 }
 
 void *client_thread(void *args) {
-    struct client C;
-    struct client *client = &C;
+    struct client *client = malloc(sizeof(struct client));
     client_init(client);
 
     g_client = client;
