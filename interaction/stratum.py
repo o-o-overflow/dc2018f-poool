@@ -69,7 +69,10 @@ class Stratum(object):
             return json.loads(d)
         except ValueError as e:
             log.warning('invalid json: %s (%r)', d, e)
-            return {}
+            return {
+                    'method': 'invalid_json', # handlers hack
+                    'raw': d
+                    }
         return o
 
     def process_one(self):
