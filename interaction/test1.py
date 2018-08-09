@@ -39,6 +39,8 @@ def main():
             end = time.time() + timeout
             for _ in xrange(n):
                 self.try_solve()
+                if time.time() > end:
+                    break
 
         def test_random(self):
             selector = random.choice(['balance', 'set_target', 'submit'])
