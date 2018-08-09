@@ -9,7 +9,7 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        fprintf(stderr, "usage: %s count", argv[0]);
+        fprintf(stderr, "usage: %s count\n", argv[0]);
     } else {
         uint32_t count = strtoull(argv[1], NULL, 10);
 

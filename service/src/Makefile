@@ -13,8 +13,9 @@ poool: poool.c $(OBJ) libcryptonight.so
 	$(CC) $(CFLAGS) -o $@ $^ -Lcrypto -lcrypto -lpthread -lcryptonight
 	strip $@
 
-bench: bench.c crypto.o libcryptonight.so
-	$(CC) $(CFLAGS) -o $@ $^ -Lcrypto -lcrypto -lcryptonight
+%: %.c crypto.o crypto/libcryptonight_s.a
+	$(CC) $(CFLAGS) -o $@ $^ -Lcrypto -lcrypto -lcryptonight_s
+	strip $@
 
 libcryptonight.so:
 	make -C crypto
