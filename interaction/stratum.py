@@ -82,7 +82,7 @@ class Stratum(object):
             self.handlers[method](self, o)
         return o
 
-    def request_sync(self, method, params=[]):
+    def request_sync(self, method, params=[], timeout=3):
         self.id += 1
         id_ = self.id
         self.slots[id_] = None
@@ -91,7 +91,8 @@ class Stratum(object):
             'method': method,
             'params': params
             }))
-        while self.slots[id_] is None:
+        end = time.time() + timeout
+        while self.slots[id_] is None and time.time() < end:
             time.sleep(0.1)
         return self.slots[id_]
 
