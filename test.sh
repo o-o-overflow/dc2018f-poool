@@ -17,7 +17,9 @@ cd interaction && docker build . -t "$INTERACTION_IMAGE:$SERVICE_TAG" && cd -
 SERVICE_ID=$(docker run -d --rm "$SERVICE_IMAGE:$SERVICE_TAG")
 
 # TODO: EXPLOIT_SCRIPTS=$(get_info.py exploit_scripts)
-EXPLOIT_SCRIPTS="/exploit1.py /exploit2.py /exploit3.py"
+# EXPLOIT_SCRIPTS="/exploit1.py /exploit2.py /exploit3.py"
+# do not run exploit2.py which may requires external resource
+EXPLOIT_SCRIPTS="/exploit1.py /exploit3.py"
 
 
 # TODO: SLA_SCRIPTS=$(get_info.py sla_scripts)
@@ -35,7 +37,6 @@ for script in $EXPLOIT_SCRIPTS
 do
 	RESULT=$(docker run --rm "$INTERACTION_IMAGE:$SERVICE_TAG" "$script" "$IP" "$SERVICE_PORT")
 	echo "$RESULT" | grep "FLAG:"
-	echo "$RESULT" | grep "FLAG: TESTFLAG"	
 done
 
 for script in $SLA_SCRIPTS

@@ -52,8 +52,8 @@ description: "pay per share stratum mining pool~"
 # satisfied. Ping reyammer/adamd/nullptr with questions.
 exploit_scripts:
   - /exploit1.py
-  - /exploit2.py
   - /exploit3.py
+# - /exploit2.py
 
 # SLA scripts are run every tick against the service.
 # This means that SLA traffic will be included in the PCAP dumps to teams
@@ -72,9 +72,10 @@ sla_scripts:
 # If you want to surface an error message on patch submission, output "ERROR: <ERROR MESSAGE>"
 # If you do not include test_scripts, the sla_scripts will be used to validate patches
 test_scripts:
-  - /test1.py # test random functionality
-  - /test2.py # test difficulty update
-  - /test3.py # test flag query
+    - /test.sh
+#   - /test1.py # test random functionality
+#   - /test2.py # test difficulty update
+#   - /test3.py # test flag query
 
 
 

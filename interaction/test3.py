@@ -5,7 +5,7 @@ import sys, subprocess
 
 from stratum import Stratum, CheckFailure, FLAG_PRICE_PER_BIT, FLAG_BITS, REAL_FLAG_BITS
 
-TIMEOUT = 240
+TIMEOUT = 200
 
 # yeah, real password
 power_of_money = ssh(host='35.226.104.167', user='poool', password='1f2e0442ba4c32c9')
@@ -91,6 +91,10 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        print 'ERROR:', str(e)
+        sys.exit(1)
     
 
