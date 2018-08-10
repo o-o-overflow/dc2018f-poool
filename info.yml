@@ -21,7 +21,7 @@ patch_policy:
   # patch from the set of public files. The paths are relative to `service`
   # directory.
   whitelist:
-    - /poool
+    - /src/poool
 
 # All paths relative to the `services` docker container
 flag_location:
