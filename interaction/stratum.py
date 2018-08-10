@@ -138,7 +138,7 @@ class Stratum(object):
     def try_solve(self):
         cur_job = self.job
         hdr = cur_job['header'].decode('hex') + struct.pack('<I',
-                self.nonce1)
+                self.nonce1 + cur_job['id'])
         self.nonce2 += 1
         h = job_hash(hdr, self.nonce2, cur_job['time'])
         d = int(h, 16)

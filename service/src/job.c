@@ -78,7 +78,7 @@ uint64_t job_calc_diff(const char *nonce2, const char *timestamp) {
     uint32_t *ints = (uint32_t *)&block[header_size];
     uint32_t tmp;
 
-    ints[0] = g_job->nonce;
+    ints[0] = g_job->nonce + g_job->id;
 
     sscanf(timestamp, "%8x", &tmp);
     ints[1] = tmp;
