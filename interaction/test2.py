@@ -3,7 +3,7 @@
 from pwn import *
 import sys
 
-from stratum import Stratum, CheckFailure, FLAG_PRICE_PER_BIT, FLAG_BITS, REAL_FLAG
+from stratum import Stratum, CheckFailure, FLAG_PRICE_PER_BIT, FLAG_BITS
 
 TIMEOUT = 60
 
