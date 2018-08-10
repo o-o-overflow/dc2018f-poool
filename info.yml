@@ -16,7 +16,7 @@ patch_policy:
   # Analysis strategy (currently only `tracing`)
   strategy: tracing
   # Maximum number of changed bytes across all files
-  max_bytes: 5
+  max_bytes: 200
   # Path whitelist: this is the list of files that the teams are allowed to
   # patch from the set of public files. The paths are relative to `service`
   # directory.
