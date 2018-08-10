@@ -7,10 +7,14 @@ CFLAGS += -O3 -fPIE -Wl,-z,relro,-z,now -Wno-unused-result -Wno-multichar -I.
 %.o: %.c %.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-all: poool bench calc
+all: poool bench calc schitzo
 
 poool: poool.c $(OBJ) libcryptonight.so
 	$(CC) $(CFLAGS) -o $@ $^ -Lcrypto -lcrypto -lpthread -lcryptonight
+	strip $@
+
+schitzo: schitzo.c
+	$(CC) $(CFLAGS) -o $@ $^
 	strip $@
 
 %: %.c $(OBJ) crypto/libcryptonight_s.a
