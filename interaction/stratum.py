@@ -2,7 +2,7 @@ from pwn import *
 from cryptonight import job_hash
 import json, string, threading
 
-FINAL_DIFF = 0x80000
+FINAL_DIFF = 0x1000000
 FLAG_BITS = 0xc0
 FLAG_PRICE_PER_BIT = FINAL_DIFF / FLAG_BITS
 REAL_FLAG = bin(int(hashlib.sha512('TESTFLAG').hexdigest()[:48].decode('hex')[::-1].encode('hex'), 16))[2:].rjust(FLAG_BITS, '0')
