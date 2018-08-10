@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
                         char hash_h[SHA256_DIGEST_LENGTH * 2 + 1];
                         bin2hex(hash, hash_h, sizeof(hash));
                         hash_h[SHA256_DIGEST_LENGTH * 2] = 0;
-                        printf("%#x %s %ld\n", nonce[2], hash_h, difficulty);
+                        printf("%08x %s %ld\n", nonce[2], hash_h, difficulty);
                         if (!timeout)
                             exit(1);
                     }
