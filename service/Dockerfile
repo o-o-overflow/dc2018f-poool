@@ -10,4 +10,4 @@ COPY src/poool /poool
 RUN chmod 755 /poool
 
 EXPOSE 10001
-CMD ["/usr/sbin/xinetd", "-filelog", "-", "-dontfork", "-f", "/service.conf"]
+CMD ["/usr/sbin/xinetd", "-dontfork", "-f", "/service.conf"]
