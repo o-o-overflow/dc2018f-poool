@@ -30,7 +30,9 @@ int main(int argc, char *argv[]) {
         memset(hash, 0, sizeof(hash));
         uint64_t *head = (uint64_t *)&hash;
 
+        srand(time(NULL));
         uint64_t step = 0x100000000ULL / threads;
+        uint32_t start = rand();
 
         int *childs = calloc(threads, sizeof(int));
 
@@ -38,7 +40,7 @@ int main(int argc, char *argv[]) {
             int pid = fork();
             if (!pid) {
                 for (uint32_t j = 0; j < step; j++) {
-                    nonce[2] = step * i + j;
+                    nonce[2] = start + step * i + j;
                     ooo_hash(block, sizeof(block), hash);
                     uint64_t difficulty = ~0ULL / SWAP64(*head);
                     if (difficulty > diff) {
