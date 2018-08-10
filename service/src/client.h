@@ -14,12 +14,12 @@
 #define CLIENT_DEFAULT_TARGET 0x80000000000000ULL
 #define CLIENT_DEFAULT_DIFF 0x200
 #define CLIENT_INVALID_TARGET 0x4000000000000000ULL
-#define CLIENT_FINAL_TARGET 0x10000000000L
-// It takes 4096 Cores machine to run about 100+s to get enough share. Hope
+#define CLIENT_FINAL_TARGET 0x20000000000L
+// It takes 4096 Cores machine to run more than 1 min to get enough share. Hope
 // it's heavy enough since it only worths one flag.
-#define CLIENT_FINAL_DIFF 0x1000000
+#define CLIENT_FINAL_DIFF 0x800000
 #define CLIENT_FLAG_BITS 0xc0
-// We should be able to fetch 1 bit of the flag in about 22s on average.
+// We should be able to fetch 1 bit of the flag in about 10s on average.
 #define CLIENT_FLAG_PRICE_PER_BIT (CLIENT_FINAL_DIFF / CLIENT_FLAG_BITS)
 
 struct client {
