@@ -68,7 +68,7 @@ struct json_value_s *nextjson(struct client *client) {
 
     while (!strchr(buf, '}') && client->buf_len < CLIENT_BUFSIZE - 1) {
         ssize_t len = read(0, &buf[client->buf_len], CLIENT_BUFSIZE - 1 - client->buf_len);
-        if (len < 0) {
+        if (len <= 0) {
             return NULL;
         }
         client->last_read = time(NULL);
