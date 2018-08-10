@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     } else {
         uint32_t count = strtoull(argv[1], NULL, 10);
 
-        size_t header_size = (size_t)&((struct job *)0)->header;
+        size_t header_size = sizeof(((struct job *)0)->header);
         uint8_t block[header_size + sizeof(uint32_t) * 4];
         memset(block, 'A', sizeof(block));
 

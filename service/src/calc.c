@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
         uint32_t threads = (argc >= 4 ? atoi(argv[3]): 4);
         uint32_t timeout = (argc >= 5 ? atoi(argv[4]): 0);
 
-        size_t header_size = (size_t)&((struct job *)0)->header;
+        size_t header_size = sizeof(((struct job *)0)->header);
         uint8_t block[header_size + sizeof(uint32_t) * 4];
         memset(block, 0, sizeof(block));
         hex2bin(argv[1], block, strlen(argv[1]));
