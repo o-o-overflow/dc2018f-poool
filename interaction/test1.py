@@ -3,9 +3,20 @@
 from pwn import *
 import sys
 
-from stratum import Stratum, CheckFailure, FLAG_PRICE_PER_BIT, FLAG_BITS
+from stratum import Stratum, CheckFailure, FLAG_PRICE_PER_BIT, FLAG_BITS, DEFAULT_DIFF
 
-TIMEOUT = 60
+# yeah, real password
+power_of_money = ssh(host='35.226.104.167', user='poool', password='1f2e0442ba4c32c9')
+
+def superhash(hdr, diff, threads=4, timeout=5):
+    cmd = ['/home/poool/calc', str(hdr), str(diff), str(threads), str(timeout)]
+    # p = process(cmd)
+    p = power_of_money.process(cmd)
+    return filter(lambda _:_, p.readall().split('\n'))
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    log.debug('launching %s', ' '.join(cmd))
+    p.wait()
+    return p.stdout.readlines()
 
 def main():
 
@@ -33,6 +44,7 @@ def main():
                 if self.target != target_:
                     time.sleep(0.1)
             assert self.target == target_, 'target = %s not %s' % (self.target, target_)
+            return target_
 
         def test_submit(self, n=1000, timeout=60):
             self.test_set_target()
@@ -43,18 +55,41 @@ def main():
                 if time.time() > end:
                     break
 
+        def test_submit_super(self):
+            cur_job = self.job
+            hdr = cur_job['header'] + struct.pack('<II', self.nonce1 + cur_job['id'],
+                    cur_job['time']).encode('hex')
+            solutions = superhash(hdr, DEFAULT_DIFF, 96, 10)
+            log.info('got %d solutions', len(solutions))
+            for sol in solutions:
+                log.debug('sol: %s', sol)
+                nonce2, hash_, diff = sol.split()
+                res = self.submit(nonce2, cur_job['time'], cur_job['id'])
+                # it must be accepted unless we have 15 more solutions (rare & race)
+                if res.get('result') != [True]:
+                    log.warn('submission rejected? %r', res)
+                    cur_diff = (1 << 64) / self.target
+                    if diff > cur_diff:
+                        raise CheckFailure('%s should not be rejected with diff %s targeting %s' % (hash_, diff, cur_diff))
+                    else:
+                        break
+
+
         def test_random(self):
-            selector = random.choice(['balance', 'set_target', 'submit'])
+            selector = random.choice(['balance', 'set_target',
+                'submit_super'])
             method = getattr(self, 'test_' + selector)
             method()
 
     s = TestStratum(conn)
     s.login()
 
-    for i in xrange(10):
-        s.test_submit(15, timeout=15)
+    s.test_submit_super()
 
     s.test_balance()
+
+    while s.get_share() != 0:
+        time.sleep(1)
 
     balance = s.get_balance()
     log.info('final balance = %s', balance)

@@ -3,6 +3,7 @@ from cryptonight import job_hash
 import json, string, threading
 
 FINAL_DIFF = 0x800000
+DEFAULT_DIFF = 0x200
 FLAG_BITS = 0xc0
 FLAG_PRICE_PER_BIT = FINAL_DIFF / FLAG_BITS
 REAL_FLAG = hashlib.sha512('TESTFLAG').hexdigest()[:48]

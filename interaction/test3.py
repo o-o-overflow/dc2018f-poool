@@ -51,8 +51,8 @@ def main():
             # it must be accepted unless we have 15 more solutions (rare & race)
             if res.get('result') != [True]:
                 log.warn('submission rejected? %r', res)
-                if diff > self.target:
-                    raise CheckFailure('%s should not be rejected with diff %d targeting %d' % (hash_, diff, self.target))
+                if diff > s.target:
+                    raise CheckFailure('%s should not be rejected with diff %d targeting %s' % (hash_, diff, s.target))
 
     share = s.get_share()
     balance = s.get_balance()
@@ -72,17 +72,21 @@ def main():
     log.info('final balance = %s', balance)
 
     nbits = balance / FLAG_PRICE_PER_BIT
-    if nbits > 0:
+    if nbits > 2:
         log.info('try get %d bits of flag', nbits)
         indices = range(FLAG_BITS)
         random.shuffle(indices)
         indices = indices[:nbits]
         res = s.query_flag(indices)
+        assert len(indices) == nbits, 'not enough result'
         for i, idx in enumerate(indices):
             log.info('bit #%d = %s, expeceted %s', idx, res[i],
                     REAL_FLAG_BITS[idx])
             if REAL_FLAG_BITS[idx] != res[i]:
                 raise CheckFailure('incorrect bit')
+    elif nbits > 0:
+        log.warn("we don't work as well as expected")
+        raise CheckFailure('?')
     else:
         log.warn('impossible, we can not fetch any bit')
         raise CheckFailure('client cheating?!')
