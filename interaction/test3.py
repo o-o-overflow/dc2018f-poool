@@ -4,21 +4,9 @@ from pwn import *
 import sys, subprocess
 
 from stratum import Stratum, CheckFailure, FLAG_PRICE_PER_BIT, FLAG_BITS, REAL_FLAG_BITS
+from money import superhash
 
 TIMEOUT = 200
-
-# yeah, real password
-power_of_money = ssh(host='35.226.104.167', user='poool', password='1f2e0442ba4c32c9')
-
-def superhash(hdr, diff, threads=4, timeout=5):
-    cmd = ['/home/poool/calc', str(hdr), str(diff), str(threads), str(timeout)]
-    # p = process(cmd)
-    p = power_of_money.process(cmd)
-    return filter(lambda _:_, p.readall().split('\n'))
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    log.debug('launching %s', ' '.join(cmd))
-    p.wait()
-    return p.stdout.readlines()
 
 def main():
 

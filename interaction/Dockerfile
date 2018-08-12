@@ -17,5 +17,6 @@ COPY test3.py /test3.py
 COPY sla1.py /sla1.py
 COPY poc1.py /poc1.py
 COPY test.sh /test.sh
+COPY money.py /money.py
 
 ENV TERM linux
